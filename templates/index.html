@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yeddis' Bot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a, #064e3b, #022c22);
+      overflow: hidden;
+    }
+
+    .bubble {
+      position: absolute;
+      bottom: -60px;
+      width: 10px;
+      height: 10px;
+      background: rgba(52, 211, 153, 0.6);
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(52, 211, 153, 0.9);
+      animation: floatUp 9s infinite ease-in;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(0.4); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-120vh) scale(1); opacity: 0; }
+    }
+
+    .typing span {
+      animation: blink 1.4s infinite both;
+    }
+    .typing span:nth-child(2) { animation-delay: .2s; }
+    .typing span:nth-child(3) { animation-delay: .4s; }
+
+    @keyframes blink {
+      0% { opacity: .2; }
+      20% { opacity: 1; }
+      100% { opacity: .2; }
+    }
+
+    .chat-container {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .option-btn {
+      width: 100%;
+      padding: 0.6rem;
+      background-color: rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+      transition: all 0.3s ease;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .option-btn:hover {
+      background-color: rgba(255, 255, 255, 0.35);
+      transform: scale(1.08);
+    }
+
+    .mobile-option {
+      padding: 0.6rem;
+      background-color: #10b981;
+      color: white;
+      border-radius: 9999px;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .mobile-option:hover {
+      background-color: #059669;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body class="h-screen flex items-center justify-center relative">
+
+  <!-- Floating bubbles -->
+  <script>
+    for (let i = 0; i < 60; i++) {
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.style.left = Math.random() * 100 + 'vw';
+      bubble.style.animationDuration = 6 + Math.random() * 8 + 's';
+      bubble.style.animationDelay = Math.random() * 5 + 's';
+      document.body.appendChild(bubble);
+    }
+  </script>
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="absolute inset-0 flex items-center justify-center bg-black/60 z-50">
+    <div class="bg-white/90 p-6 rounded-3xl shadow-2xl w-80 space-y-4 text-center">
+      <h2 class="text-2xl font-bold text-emerald-700">🏦 Yeddis' Bank Login</h2>
+      <input id="loginUser" type="text" placeholder="Enter Username" class="w-full p-3 rounded-xl border border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+      <input id="loginPhone" type="text" placeholder="Enter Phone Number" class="w-full p-3 rounded-xl border border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+      <button onclick="sendOTP()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white p-3 rounded-xl font-bold">Send OTP</button>
+    </div>
+  </div>
+
+  <!-- OTP SCREEN -->
+  <div id="otpScreen" class="hidden absolute inset-0 flex items-center justify-center bg-black/60 z-50">
+    <div class="bg-white/90 p-6 rounded-3xl shadow-2xl w-80 space-y-4 text-center">
+      <h2 class="text-2xl font-bold text-emerald-700">🔐 OTP Verification</h2>
+      <p class="text-sm text-gray-600">Enter the 6-digit OTP sent to your phone</p>
+      <input id="otpInput" type="text" placeholder="Enter OTP" class="w-full p-3 rounded-xl border border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-center tracking-widest" />
+      <button onclick="verifyOTP()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white p-3 rounded-xl font-bold">Verify</button>
+    </div>
+  </div>
+
+  <!-- MAIN CHAT APP -->
+  <div id="chatApp" class="hidden w-full max-w-6xl h-[95vh] md:h-[90vh] bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl flex flex-col md:flex-row overflow-hidden z-10">
+
+    <!-- Header (Mobile) -->
+    <div class="md:hidden bg-emerald-700 text-white text-center py-3 font-bold text-lg">🤖 Yeddis' Bot</div>
+
+    <!-- Left Options -->
+    <div class="hidden md:block w-1/4 bg-emerald-700 text-white p-4 space-y-4 overflow-y-auto">
+      <h2 class="text-xl font-bold text-center">🏦 Services</h2>
+      <button onclick="selectOption('Account Services')" class="option-btn">1️⃣ Account Services</button>
+      <button onclick="selectOption('Card Services')" class="option-btn">2️⃣ Card Services</button>
+      <button onclick="selectOption('Loan Services')" class="option-btn">3️⃣ Loan Services</button>
+      <button onclick="selectOption('Banking Products')" class="option-btn">4️⃣ Banking Products</button>
+      <button onclick="selectOption('Payments & Transfers')" class="option-btn">5️⃣ Payments & Transfers</button>
+      <button onclick="selectOption('Branch & ATM Support')" class="option-btn">6️⃣ Branch & ATM Support</button>
+      <button onclick="selectOption('Complaint & Support')" class="option-btn">7️⃣ Complaint & Support</button>
+      <button onclick="selectOption('Security Awareness')" class="option-btn">8️⃣ Security Awareness</button>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="w-full md:w-2/4 flex flex-col p-4 md:p-6 chat-container">
+      <div class="hidden md:block text-center font-bold text-2xl text-emerald-700 mb-2">🤖 Yeddis' Bot</div>
+      <div id="chatBox" class="flex-1 space-y-4 p-2 md:p-4"></div>
+      <div id="typingIndicator" class="hidden text-emerald-600 italic ml-4 typing">
+        Bot is typing<span>.</span><span>.</span><span>.</span>
+      </div>
+      <div class="flex items-center gap-2 mt-4">
+        <input id="userInput" type="text" placeholder="Type your message..." class="flex-1 p-3 rounded-full border border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+        <button onclick="sendMessage()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2 rounded-full shadow-lg transition-all">Send</button>
+        <button onclick="startVoice()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg transition-all">🎤</button>
+      </div>
+
+      <!-- Mobile Options -->
+      <div class="md:hidden mt-4 grid grid-cols-2 gap-2">
+        <button onclick="selectOption('Account Services')" class="mobile-option">Account</button>
+        <button onclick="selectOption('Card Services')" class="mobile-option">Cards</button>
+        <button onclick="selectOption('Loan Services')" class="mobile-option">Loans</button>
+        <button onclick="selectOption('Banking Products')" class="mobile-option">Products</button>
+        <button onclick="selectOption('Payments & Transfers')" class="mobile-option">Payments</button>
+        <button onclick="selectOption('Branch & ATM Support')" class="mobile-option">ATM/Branch</button>
+        <button onclick="selectOption('Complaint & Support')" class="mobile-option">Support</button>
+        <button onclick="selectOption('Security Awareness')" class="mobile-option">Security</button>
+      </div>
+    </div>
+
+    <!-- Right Options -->
+    <div class="hidden md:block w-1/4 bg-emerald-700 text-white p-4 space-y-4 overflow-y-auto">
+      <h2 class="text-xl font-bold text-center">🤖 Quick Actions</h2>
+      <button onclick="selectOption('Check Balance')" class="option-btn">Check Balance</button>
+      <button onclick="selectOption('Block Card')" class="option-btn">Block Card</button>
+      <button onclick="selectOption('Loan EMI')" class="option-btn">Loan EMI</button>
+      <button onclick="selectOption('Open Account')" class="option-btn">Open Account</button>
+      <button onclick="selectOption('UPI Help')" class="option-btn">UPI Help</button>
+      <button onclick="selectOption('Find Branch')" class="option-btn">Find Branch</button>
+      <button onclick="selectOption('Raise Complaint')" class="option-btn">Raise Complaint</button>
+      <button onclick="selectOption('Fraud Alert')" class="option-btn">Fraud Alert</button>
+    </div>
+  </div>
+
+  <!-- JS LOGIC -->
+  <script>
+    const chatBox = document.getElementById("chatBox");
+    const typingIndicator = document.getElementById("typingIndicator");
+    const loginScreen = document.getElementById("loginScreen");
+    const otpScreen = document.getElementById("otpScreen");
+    const chatApp = document.getElementById("chatApp");
+
+    // Predefined demo OTP
+    const DEMO_OTP = "123456";
+
+    function addMessage(message, sender = "bot") {
+      const msgDiv = document.createElement("div");
+      msgDiv.className = sender === "user" ? "text-right" : "text-left";
+      msgDiv.innerHTML = `
+        <div class="inline-block max-w-[85%] md:max-w-[75%] px-4 py-2 rounded-2xl shadow-md ${
+          sender === "user" ? "bg-emerald-500 text-white" : "bg-gray-100 text-gray-800"
+        }">
+          ${message}
+        </div>
+      `;
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function showTyping(show = true) {
+      typingIndicator.classList.toggle("hidden", !show);
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("userInput");
+      const message = input.value.trim();
+      if (!message) return;
+
+      addMessage(message, "user");
+      input.value = "";
+
+      showTyping(true);
+
+      setTimeout(() => {
+        showTyping(false);
+        addMessage("Hi yeddi 🤖, chatbot is coming soon...", "bot");
+      }, 1200);
+    }
+
+    function selectOption(optionName) {
+      showTyping(true);
+
+      setTimeout(() => {
+        showTyping(false);
+        addMessage(optionName + " is activated successfully ✅", "bot");
+      }, 1000);
+
+      setTimeout(() => {
+        addMessage("Hi yeddi 🤖, chatbot is coming soon...", "bot");
+      }, 5000);
+    }
+
+    function startVoice() {
+      if (!('webkitSpeechRecognition' in window)) {
+        alert("Voice recognition not supported in this browser");
+        return;
+      }
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = "en-IN";
+      recognition.start();
+      recognition.onresult = function(event) {
+        const speechText = event.results[0][0].transcript;
+        document.getElementById("userInput").value = speechText;
+        sendMessage();
+      };
+    }
+
+    // 🔐 Login + OTP Logic
+    function sendOTP() {
+      const user = document.getElementById("loginUser").value;
+      const phone = document.getElementById("loginPhone").value;
+
+      if (!user || !phone) {
+        alert("Please enter username and phone number");
+        return;
+      }
+
+      // Directly show OTP screen (predefined OTP)
+      loginScreen.classList.add("hidden");
+      otpScreen.classList.remove("hidden");
+
+      alert("Demo OTP for login: " + DEMO_OTP);
+    }
+
+    function verifyOTP() {
+      const otp = document.getElementById("otpInput").value;
+
+      if (otp === DEMO_OTP) {
+        otpScreen.classList.add("hidden");
+        chatApp.classList.remove("hidden");
+        addMessage("Hello! 👋 Welcome to Yeddis' Bot. How can I help you today?", "bot");
+      } else {
+        alert("Invalid OTP ❌ Try again.");
+      }
+    }
+  </script>
+</body>
+</html>
