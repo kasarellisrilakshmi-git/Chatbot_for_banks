@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Donor Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1E293B, #3B82F6);
+            margin: 0;
+            padding: clamp(16px, 4vw, 30px);
+            animation: fadeIn 1.2s ease-in-out;
+            min-height: 100vh;
+            color: #EDEDED;
+        }
+
+        h1, h2 {
+            color: #FACC15;
+            text-align: center;
+            margin-bottom: 1.2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            letter-spacing: -0.5px;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #FACC15, #FBBF24);
+            float: right;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin: 0.5rem 0.5rem 1rem 0;
+            color: #1E293B;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #FBBF24, #FACC15);
+            transform: scale(1.07) translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: clamp(16px, 4vw, 40px);
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: clamp(18px, 4vw, 30px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .box:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        button {
+            background: linear-gradient(135deg, #FACC15, #FBBF24);
+            color: #1E293B;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #FBBF24, #FACC15);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            margin: 16px 0;
+            font-weight: 600;
+            color: #FACC15;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 10px;
+            transition: background-color 0.3s, transform 0.3s;
+            flex-wrap: wrap;
+        }
+
+        li:hover {
+            background-color: rgba(255,255,255,0.15);
+            transform: scale(1.02);
+        }
+
+        .notification-card {
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: clamp(14px, 3vw, 20px);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #2D3748, #1E293B);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            position: relative;
+            animation: slideIn 0.8s ease-in-out forwards;
+            transition: all 0.4s ease;
+            color: #10B981;
+        }
+
+        .notification-card span,
+        .notification-card p {
+            color: #10B981 !important;
+        }
+
+        .notification-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+        }
+
+        .notification-card::before {
+            content: "🔔";
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            font-size: 24px;
+            animation: bounce 2s infinite;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile tweaks */
+        @media (max-width: 480px) {
+            h1 {
+                margin-bottom: 1rem;
+            }
+
+            .logout-btn {
+                float: none;
+                display: block;
+                margin: 0.5rem auto 1rem;
+            }
+
+            li {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            li form {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                gap: 10px;
+            }
+
+            li button {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome Donor, {{ username }}</h1>
+    <a href="/logout"><button class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button></a>
+
+    <div class="container">
+        <div class="box">
+            <h2>Donate to Orphanages</h2>
+            <ul>
+                {% for orphan in orphans %}
+                <li>
+                    <form onsubmit="submitDonation(event)" style="display:inline;">
+                        <input type="hidden" name="orphanage" value="{{ orphan.name }}">
+                        <i class="fas fa-hand-holding-heart"></i> {{ orphan.name }}
+                        <button type="submit"><i class="fas fa-gift"></i> Donate</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="box">
+            <h2>Notifications from Receivers</h2>
+            <div id="notifications"></div>
+        </div>
+    </div>
+
+    <script>
+        function submitDonation(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            fetch('/donate', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                }
+            });
+        }
+
+        function loadNotifications() {
+            fetch('/get_donor_notifications')
+                .then(response => response.json())
+                .then(data => {
+                    const notifDiv = document.getElementById('notifications');
+                    notifDiv.innerHTML = '';
+                    data.forEach(notif => {
+                        notifDiv.innerHTML += `
+                            <div class="notification-card">
+                                <i class="fas fa-user" style="color: #7C3AED;"></i> 
+                                <strong style="color: #6D28D9;">Name:</strong> 
+                                <span style="color: #4C1D95;">${notif.name}</span><br>
+
+                                <i class="fas fa-map-marker-alt" style="color: #7C3AED;"></i> 
+                                <strong style="color: #6D28D9;">Address:</strong> 
+                                <span style="color: #4C1D95;">${notif.address}</span><br>
+
+                                <i class="fas fa-phone" style="color: #7C3AED;"></i> 
+                                <strong style="color: #6D28D9;">Phone:</strong> 
+                                <span style="color: #4C1D95;">${notif.phone}</span>
+                            </div>
+                        `;
+                    });
+                });
+        }
+
+        setInterval(loadNotifications, 3000);
+        loadNotifications();
+    </script>
+</body>
+</html>
